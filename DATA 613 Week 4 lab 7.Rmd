@@ -1,0 +1,69 @@
+---
+title: "DATA 613 Week 4 Lab 7"
+author: "Brenda Cuellar"
+date: "2022-07-20"
+output: html_document
+---
+1) Use and show data.table code to select the variables year, month, day, and hour from the imported flights data
+```{r}
+library(tidyverse)    
+library(dplyr)  
+library(data.table)
+## set wd first
+setwd("~/Desktop/R_files/DATA_613")
+
+# Using a data.table read in.
+flights <- fread("nycdata.csv")  
+flights   
+```
+```{r}
+flights[, list(year, month, day, hour)]->flights1
+flights1
+```
+
+2) Use and show data. table code to produce a table that shows a carrier of DL, an origin of JFK and a destination of SEA
+```{r}
+flights[carrier == "DL"& origin == "JFK"& dest == "SEA"]->flights2
+flights2
+```
+
+3) Use and show data.table code to produce a table that shows a carrier of UA, a month of March, and an airtime that is below 330.
+```{r}
+flights[carrier == "UA" & month == 3 & air_time < 330]->flights3
+flights3
+```
+
+4) Use and show tidyverse code to produce a table that shows a carrier of UA, a month of March, and an airtime that is below 330.  
+```{r}
+flights%>%
+  select(carrier, month, air_time)%>%
+  filter(carrier == "UA", month == 3, air_time < 330)->flights4
+flights4
+```
+
+5) Use the data.table method to add a variable called speed that is the average air speed of the plane in miles per hour. 
+```{r}
+flights[, "speed" := .(distance/air_time)]
+flights
+```
+
+6) Use the tidyverse method to add a variable called speed that is the average air speed of the plane in miles per hour.
+```{r}
+flights%>%
+  mutate(speed=(distance/air_time)) -> flights6
+flights6
+```
+
+7) Show and use coding to change the carrier abbreviation of UA to UniitedAir,
+7a) data.table method
+```{r}
+flights[carrier == "UA", carrier := "UnitedAir"][carrier == "UnitedAir"]
+```
+
+7b tidyverse method  (Use a sequence of dplyr commands so that you can see the change in your table)
+```{r}
+flights %>%
+  mutate(carrier = recode(carrier, "UA" = "UnitedAir"))%>%
+  filter(carrier == "UnitedAir")-> flights7b
+flights7b
+```
